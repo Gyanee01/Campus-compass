@@ -19,6 +19,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource
+import com.gyan.campuscompass.R
 import com.gyan.campuscompass.model.AuthState
 import com.gyan.campuscompass.model.AuthViewModel
 import com.gyan.campuscompass.model.User
@@ -67,6 +69,15 @@ fun SignupScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(32.dp))
+        
+        androidx.compose.foundation.Image(
+            painter = painterResource(id = R.drawable.app_logo),
+            contentDescription = "App Logo",
+            modifier = Modifier.size(80.dp)
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+
         Text(
             text = "Create Account",
             style = MaterialTheme.typography.headlineLarge,
@@ -209,7 +220,13 @@ fun SignupScreen(
                 modifier = Modifier.clickable { onNavigateToLogin() }
             )
         }
-        
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextButton(onClick = { viewModel.continueAsGuest() }) {
+            Text("Continue as Guest", color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.SemiBold)
+        }
+
         Spacer(modifier = Modifier.height(32.dp))
     }
 }

@@ -1,54 +1,66 @@
 # Campus Compass 🧭
 
-**Campus Compass** is a modern Android application designed for college students to share and discover travel experiences. Built with **Jetpack Compose**, **Material 3**, and **Firebase**, it provides a soft, intuitive UI for navigating both educational and leisure trips.
+**Campus Compass (CC)** is a comprehensive student-centric travel and experience-sharing platform for Android. It empowers college students to document their journeys, share budget-friendly tips, and access critical safety information through a modern, intuitive interface.
 
-## 🚀 Features
+## ✨ Key Features
 
-- **Main Feed Hub:** A centralized display of student-shared trips with a hybrid grid/list layout.
-- **Smart SOS System:** A one-tap emergency system providing quick access to campus security and local authorities via a Modal Bottom Sheet.
-- **Experience Publishing:** Students can share their own travel stories, transport modes, and tips.
-- **Filtering System:** Easily categorize trips into *Educational*, *Leisure*, or *Events*.
-- **Floating Navigation:** A custom floating pill-shaped navigation bar for a premium, modern feel.
-- **Offline Caching (In Progress):** Designed to work in low-connectivity environments.
+### 🌟 Experience Sharing
+- **Rich Post Creation**: Share trip details including venue names, transport modes (Train, Bus, Flight), accommodation, and food costs.
+- **Smart Tagging**: Categorize experiences with tags like *#Educational*, *#Adventure*, *#BudgetFriendly*, and more.
+- **Visual Storytelling**: High-quality image galleries with captions and cover artwork gradients.
 
-## 🛠️ Architecture (Based on DFD)
+### 🛡️ Safety First: Integrated SOS System
+- **Localized Emergency Info**: Each trip post includes specific emergency metadata like nearby hospitals, police stations, and local emergency contacts.
+- **One-Tap SOS**: A high-visibility emergency button in the trip details launches a comprehensive SOS Bottom Sheet for immediate assistance.
 
-The app follows a structured Data Flow Diagram (DFD):
-- **Process 1.0:** Guest/Student Authentication (Firebase Auth).
-- **Process 2.0:** Main Feed Screen coordination.
-- **Process 3.0:** Post Engine (Firestore integration).
-- **Process 4.0:** Create Post Flow.
-- **Process 5.0:** Smart SOS System.
-- **Process 6.0:** Navigation Drawer & Routing.
+### 🎨 Modern UI & Branding
+- **"CC" Branding**: Custom branded experience from the splash screen to the navigation drawer.
+- **Adaptive Icons**: Fully optimized launcher icons for a professional look on all Android versions.
+- **Material 3 Design**: A soft, "Light Blue" themed interface with heavily rounded corners (24dp) and fluid animations.
+- **Floating Navigation**: A custom-built floating pill navigation bar for seamless screen switching.
+
+### ⚡ Demo Mode
+- **Zero-Config Presentation**: The app includes a robust `DEMO_MODE` that bypasses Firebase and uses local mock data.
+- **Pre-loaded Demo Accounts**: Instant login with pre-configured personas like "Rider", "Senpai", and "Nomad" to showcase the app without an internet connection.
 
 ## 🛠️ Tech Stack
 
-- **Language:** Kotlin
-- **UI Framework:** Jetpack Compose (Material 3)
-- **Backend:** Firebase (Auth, Firestore, Analytics)
-- **Architecture:** MVVM (ViewModel, LiveData/State)
-- **Navigation:** Compose Navigation
+- **UI Framework**: [Jetpack Compose](https://developer.android.com/jetpack/compose) (Material 3)
+- **Language**: [Kotlin](https://kotlinlang.org/)
+- **Backend**: [Firebase](https://firebase.google.com/) (Authentication & Firestore)
+- **Architecture**: MVVM (Model-View-ViewModel)
+- **Navigation**: Compose Navigation with Custom Transitions
+- **Image Loading**: [Coil](https://coil-kt.github.io/coil/)
+- **Splash API**: `androidx.core:core-splashscreen`
 
-## 📸 UI/UX Design
+## 🚀 Getting Started
 
-The app uses a "Soft Blue & White" visual language:
-- **Primary Color:** `#1A73E8` (PrimaryBlue)
-- **Surface:** `#E8F0FE` (LightBlueSurface)
-- **Rounding:** 24.dp heavily rounded corners for a modern, approachable feel.
+### Prerequisites
+- Android Studio Ladybug or later.
+- Android SDK 34 (Upside Down Cake).
 
-## 🏗️ Getting Started
-
-1. **Clone the repo:**
+### Installation
+1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/campus-compass.git
+   git clone https://github.com/yourusername/campus-compass.git
    ```
-2. **Setup Firebase:**
-   - Create a project in the [Firebase Console](https://console.firebase.google.com/).
-   - Add an Android app with the package name `com.gyan.campuscompass`.
-   - Download `google-services.json` and place it in the `app/` directory.
-   - Enable **Anonymous Authentication** and **Firestore** (in test mode).
-3. **Build & Run:** Open the project in Android Studio (Ladybug or later) and run on an API 34+ emulator.
+2. **Open in Android Studio**:
+   Allow Gradle to sync and download dependencies.
+3. **Run as Demo (Default)**:
+   The app is pre-configured in `DEMO_MODE = true` (see `Config.kt`). Simply build and run.
+4. **Production Setup**:
+   - Set `Config.DEMO_MODE = false`.
+   - Add your `google-services.json` to the `app/` folder.
+   - Enable Email/Password auth in the Firebase Console.
+
+## 📱 Screenshots (Mockups)
+- **Splash Screen**: Featuring the new "CC" branding.
+- **Main Feed**: Dynamic sorting (Recent, Most Liked, Most Commented).
+- **Post Details**: Detailed breakdown with the red SOS trigger.
+- **Create Post**: Multi-step form with image picking.
 
 ## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-This project is licensed under the MIT License.
+---
+*Built with ❤️ for the student community by Gyan.*

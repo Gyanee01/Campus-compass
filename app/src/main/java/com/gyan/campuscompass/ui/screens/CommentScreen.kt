@@ -1,5 +1,6 @@
 package com.gyan.campuscompass.ui.screens
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -7,10 +8,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.Flag
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -28,7 +30,9 @@ import com.gyan.campuscompass.model.User
 @Composable
 fun CommentScreen(
     postId: String,
-    onBackClick: () -> Unit
+    onBackStackClick: () -> Unit,
+    isGuest: Boolean = false,
+    onAuthRequired: () -> Unit = {}
 ) {
     var commentText by remember { mutableStateOf("") }
     
@@ -50,7 +54,8 @@ fun CommentScreen(
             Comment(
                 id = "c2",
                 author = User(username = "sneha_v", studentYear = "1st Year"),
-                content = "Is the registration still open?"
+                content = "Is the registration still open?",
+                isQuestion = true
             )
         )
     }
@@ -60,25 +65,22 @@ fun CommentScreen(
             TopAppBar(
                 title = { Text("Comments", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    IconButton(onClick = onBackStackClick) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface
-                )
+                }
             )
         },
         bottomBar = {
+            // Sticky comment input field above keyboard (Requirement 36)
             Surface(
                 tonalElevation = 8.dp,
-                shadowElevation = 8.dp
+                shadowElevation = 8.dp,
+                modifier = Modifier.imePadding() // Keyboard-aware
             ) {
                 Row(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .padding(bottom = 16.dp) // Extra padding for bottom navigation if needed
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -87,16 +89,22 @@ fun CommentScreen(
                         onValueChange = { commentText = it },
                         placeholder = { Text("Add a comment...") },
                         modifier = Modifier.weight(1f),
+                        enabled = !isGuest,
                         shape = RoundedCornerShape(24.dp),
                         colors = TextFieldDefaults.colors(
                             focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        )
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                        ),
+                        maxLines = 4
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     FloatingActionButton(
                         onClick = {
-                            if (commentText.isNotBlank()) {
+                            if (isGuest) {
+                                onAuthRequired()
+                            } else if (commentText.isNotBlank()) {
                                 comments.add(
                                     Comment(
                                         id = System.currentTimeMillis().toString(),
@@ -112,7 +120,7 @@ fun CommentScreen(
                         shape = CircleShape,
                         modifier = Modifier.size(48.dp)
                     ) {
-                        Icon(Icons.Default.Send, contentDescription = "Send", modifier = Modifier.size(20.dp))
+                        Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send", modifier = Modifier.size(20.dp))
                     }
                 }
             }
@@ -123,10 +131,15 @@ fun CommentScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp) // Better spacing
         ) {
-            items(comments) { comment ->
-                CommentItem(comment = comment)
+            items(comments, key = { it.id }) { comment ->
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn() + expandVertically()
+                ) {
+                    CommentItem(comment = comment)
+                }
             }
         }
     }
@@ -136,9 +149,19 @@ fun CommentScreen(
 fun CommentItem(comment: Comment, isReply: Boolean = false) {
     var isFlagged by remember { mutableStateOf(comment.isFlagged) }
 
+    // Highlight raised/question comments visually (Requirement 36)
+    val containerColor = if (comment.isQuestion) {
+        MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f)
+    } else {
+        Color.Transparent
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(containerColor)
+            .padding(if (comment.isQuestion) 8.dp else 0.dp)
             .padding(start = if (isReply) 40.dp else 0.dp)
     ) {
         Row(verticalAlignment = Alignment.Top) {
@@ -163,11 +186,29 @@ fun CommentItem(comment: Comment, isReply: Boolean = false) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = comment.author.username,
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = comment.author.username,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                        if (comment.isQuestion) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Surface(
+                                color = MaterialTheme.colorScheme.secondary,
+                                shape = RoundedCornerShape(4.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = null, modifier = Modifier.size(10.dp), tint = Color.White)
+                                    Spacer(modifier = Modifier.width(2.dp))
+                                    Text("QUESTION", style = MaterialTheme.typography.labelSmall, color = Color.White, fontSize = 8.sp)
+                                }
+                            }
+                        }
+                    }
                     IconButton(
                         onClick = { isFlagged = !isFlagged },
                         modifier = Modifier.size(24.dp)
@@ -186,19 +227,28 @@ fun CommentItem(comment: Comment, isReply: Boolean = false) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 
-                if (!isReply) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
                     Text(
                         text = "Reply",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(top = 4.dp)
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = "Like",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.outline
                     )
                 }
             }
         }
         
         if (comment.replies.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             comment.replies.forEach { reply ->
                 CommentItem(comment = reply, isReply = true)
                 Spacer(modifier = Modifier.height(12.dp))

@@ -2,6 +2,7 @@ package com.gyan.campuscompass.ui.screens
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gyan.campuscompass.R
 import com.gyan.campuscompass.model.AuthState
 import com.gyan.campuscompass.model.AuthViewModel
 
@@ -50,6 +52,14 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.app_logo),
+            contentDescription = "App Logo",
+            modifier = Modifier.size(100.dp)
+        )
+        
+        Spacer(modifier = Modifier.height(24.dp))
+
         Text(
             text = "Welcome Back",
             style = MaterialTheme.typography.headlineLarge,
@@ -163,5 +173,48 @@ fun LoginScreen(
                 modifier = Modifier.clickable { onNavigateToSignup() }
             )
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextButton(onClick = { viewModel.continueAsGuest() }) {
+            Text("Continue as Guest", color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.SemiBold)
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Demo Accounts Section (Visible in dev/test builds)
+        DemoAccountsSection(onDemoClick = { email, pass -> viewModel.loginWithDemo(email, pass) })
     }
+}
+
+@Composable
+fun DemoAccountsSection(onDemoClick: (String, String) -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text("Quick Access Demo Accounts", style = MaterialTheme.typography.labelMedium, color = Color.Gray)
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            DemoChip("Rider", "rider.demo@campuscompass.app", "Campus@123", onDemoClick)
+            DemoChip("Senpai", "senpai.demo@campuscompass.app", "Compass@123", onDemoClick)
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            DemoChip("Nomad", "nomad.demo@campuscompass.app", "Travel@123", onDemoClick)
+            DemoChip("Wanderer", "wanderer.demo@campuscompass.app", "Explore@123", onDemoClick)
+        }
+    }
+}
+
+@Composable
+fun DemoChip(label: String, email: String, pass: String, onClick: (String, String) -> Unit) {
+    AssistChip(
+        onClick = { onClick(email, pass) },
+        label = { Text(label, fontSize = 12.sp) },
+        shape = RoundedCornerShape(12.dp)
+    )
 }

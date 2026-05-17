@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.activity.viewModels
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.gyan.campuscompass.model.AuthViewModel
 import com.gyan.campuscompass.model.PostViewModel
 import com.gyan.campuscompass.model.getMockPosts
@@ -23,14 +24,14 @@ class MainActivity : ComponentActivity() {
     private val postViewModel: PostViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             CampusCompassTheme {
                 CampusCompassApp(
-                    posts = if (postViewModel.posts.isEmpty()) getMockPosts() else postViewModel.posts,
-                    isLoggedIn = authViewModel.currentUser.value != null,
-                    onLoginClick = { authViewModel.signInAnonymously() }
+                    authViewModel = authViewModel,
+                    postViewModel = postViewModel
                 )
             }
         }

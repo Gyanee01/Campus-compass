@@ -28,7 +28,8 @@ import com.gyan.campuscompass.ui.components.PostCard
 fun SavedPostsScreen(
     savedPosts: List<Post> = emptyList(),
     onBackClick: () -> Unit = {},
-    onPostClick: (Post) -> Unit = {}
+    onPostClick: (Post) -> Unit = {},
+    onUserClick: (com.gyan.campuscompass.model.User) -> Unit = {}
 ) {
     var selectedCategory by remember { mutableStateOf("All") }
     val categories = listOf("All") + PostCategory.entries.map { it.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() } }
@@ -73,7 +74,11 @@ fun SavedPostsScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(savedPosts) { post ->
-                        PostCard(post = post, onClick = { onPostClick(post) })
+                        PostCard(
+                            post = post,
+                            onClick = { onPostClick(post) },
+                            onUserClick = onUserClick
+                        )
                     }
                     item { Spacer(modifier = Modifier.height(100.dp)) }
                 }

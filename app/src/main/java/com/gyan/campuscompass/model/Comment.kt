@@ -7,6 +7,7 @@ data class Comment(
     val content: String = "",
     val timestamp: Long = System.currentTimeMillis(),
     val isFlagged: Boolean = false,
+    val isQuestion: Boolean = false,
     val parentId: String? = null,
     val replies: List<Comment> = emptyList()
 )
