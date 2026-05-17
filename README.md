@@ -53,11 +53,7 @@
    - Add your `google-services.json` to the `app/` folder.
    - Enable Email/Password auth in the Firebase Console.
 
-## 📱 Screenshots (Mockups)
-- **Splash Screen**: Featuring the new "CC" branding.
-- **Main Feed**: Dynamic sorting (Recent, Most Liked, Most Commented).
-- **Post Details**: Detailed breakdown with the red SOS trigger.
-- **Create Post**: Multi-step form with image picking.
+
 
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
